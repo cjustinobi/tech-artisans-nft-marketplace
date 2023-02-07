@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import { DrawerContext } from './contexts/AppContext'
 import AppHeader from './components/layout/Header'
+import NFTForm from './components/NFTForm'
 import Home from './pages/Home'
 // import Events from './pages/Events'
 import { CeloProvider, Alfajores, NetworkNames } from '@celo/react-celo'
@@ -46,6 +47,7 @@ const App = () => {
   return (
     <DrawerContext.Provider value={{drawer, setDrawer}}>
       <AppHeader/>
+      <NFTForm />
       <Routes>
         <Route path="/" element={<Home/>}/>
         {/*<Route path="/events" element={<Events/>}/>*/}
