@@ -1,3 +1,3 @@
 import { createContext } from 'react'
 
-export const DrawerContext = createContext(false)
+export const NotificationContext = createContext(false)

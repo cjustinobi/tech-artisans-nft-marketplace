@@ -1,9 +1,11 @@
-import { useState } from 'react'
-import { imageToIPFS } from '../utils'
+import { useState, useContext } from 'react'
+import { imageToIPFS, JSONToIPFS } from '../utils'
+import { NotificationContext } from '../contexts/AppContext'
 
 
 const NFTForm = () => {
 
+  const { setNotification } = useContext(NotificationContext)
 
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState('')
@@ -12,8 +14,8 @@ const NFTForm = () => {
   const [image, setImage] = useState('')
 
   const createNFT = async () => {
-return setLoading(true)
-    if (isNotValid()) return alert('All fields are required')
+
+    if (isNotValid()) return setNotification('All fields are required')
 
     setLoading(true)
 
@@ -23,6 +25,19 @@ return setLoading(true)
     })
 
     CID = await CID
+
+    console.log('cid ', CID)
+
+    const nftJson = {
+      name,
+      price,
+      description,
+      image: CID
+    }
+
+    const res = await JSONToIPFS(nftJson)
+    // https://gateway.pinata.cloud/ipfs/
+    console.log('json res ', res)
   }
 
 

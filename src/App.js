@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom'
-import { DrawerContext } from './contexts/AppContext'
+import { NotificationContext } from './contexts/AppContext'
 import AppHeader from './components/layout/Header'
+import Notification from './components/layout/Notification'
 import NFTForm from './components/NFTForm'
 import Home from './pages/Home'
 // import Events from './pages/Events'
@@ -36,7 +37,8 @@ const App = () => {
 
   const navigate = useNavigate()
 
-  const [drawer, setDrawer] = useState(false)
+  // const [drawer, setDrawer] = useState(false)
+  const [notification, setNotification] = useState('')
 
   const showEventForm = () => {
     navigate('/events', {
@@ -45,15 +47,16 @@ const App = () => {
   }
 
   return (
-    <DrawerContext.Provider value={{drawer, setDrawer}}>
+    <NotificationContext.Provider value={{notification, setNotification}}>
       <AppHeader/>
       <NFTForm />
+      <Notification notification={notification} />
       <Routes>
         <Route path="/" element={<Home/>}/>
         {/*<Route path="/events" element={<Events/>}/>*/}
       </Routes>
 
-    </DrawerContext.Provider>
+    </NotificationContext.Provider>
   )
 }
 

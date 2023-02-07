@@ -2,7 +2,6 @@ import { useEffect, useContext } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useCelo } from '@celo/react-celo'
 import { truncate } from '../../utils'
-import { DrawerContext } from '../../contexts/AppContext'
 
 
 const AppHeader = () => {
@@ -12,7 +11,7 @@ const AppHeader = () => {
 
   const { address, connect, disconnect } = useCelo()
 
-  const { drawer, setDrawer } = useContext(DrawerContext)
+  // const { drawer, setDrawer } = useContext(DrawerContext)
 
   const showEventForm = () => {
     navigate('/events', {
@@ -20,9 +19,9 @@ const AppHeader = () => {
     })
   }
 
-  useEffect(() => {
-    setDrawer(false)
-  }, [location, setDrawer])
+  // useEffect(() => {
+  //   setDrawer(false)
+  // }, [location, setDrawer])
 
   return (
     <div>
