@@ -1,5 +1,5 @@
 import axios  from 'axios'
-import { IPFSUrl } from './constants'
+import { IPFS_URL } from './constants'
 
 export const imageToIPFS = async (image) => {
 
@@ -27,13 +27,13 @@ export const JSONToIPFS = async(json) => {
   const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`
 
   // Making axios POST request to Pinata.
-  const res = axios.post(url, json, {
+  const res = await axios.post(url, json, {
       headers: {
         'Authorization': `Bearer ${process.env.REACT_APP_PINATA_JWT}`
       }
     })
 
-  return res.data.IpfsHash
+  return `${IPFS_URL}${res.data.IpfsHash}`
 
 }
 

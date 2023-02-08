@@ -1,11 +1,19 @@
-import { useState, useContext } from 'react'
-import { imageToIPFS, JSONToIPFS } from '../utils'
+import { useState, useContext, useEffect } from 'react'
+import { useContract } from '../hooks'
+import { imageToIPFS, JSONToIPFS, nftContractAddress, formatPrice } from '../utils'
 import { NotificationContext } from '../contexts/AppContext'
+import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
+import {useCelo} from "@celo/react-celo"
+
 
 
 const NFTForm = () => {
 
-  const { setNotification } = useContext(NotificationContext)
+  const { kit, address } = useCelo()
+console.log(kit.connection)
+  const nftContract = useContract(NFTMarketplace.abi, nftContractAddress)
+
+  const { notification, setNotification } = useContext(NotificationContext)
 
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState('')
@@ -35,9 +43,13 @@ const NFTForm = () => {
       image: CID
     }
 
-    const res = await JSONToIPFS(nftJson)
-    // https://gateway.pinata.cloud/ipfs/
-    console.log('json res ', res)
+    const nftURI = await JSONToIPFS(nftJson)
+
+    const res = await nftContract.methods.createToken(formatPrice(price)).send({
+      from: address,
+      value: formatPrice()
+    })
+    console.log('nft res ', res)
   }
 
 
@@ -55,6 +67,13 @@ const NFTForm = () => {
     return res
   }
 
+  useEffect(() => {
+    if(notification) {
+      setTimeout(() => {
+        setNotification('')
+      }, 2000)
+    }
+  }, [notification])
 
   return (
 
