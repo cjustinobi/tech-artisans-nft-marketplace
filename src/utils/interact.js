@@ -1,6 +1,6 @@
 
 import EventHub from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
-export const nftContractAddress = '0x9eFfBBA30Db18CB5eF3DdFCe24d034E776c642fA'
+export const nftContractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138'
 
 // export const contract = (kit) => {
 //   // const kit = await getConnectedKit()

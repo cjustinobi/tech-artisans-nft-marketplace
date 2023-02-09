@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom'
-import { NotificationContext } from './contexts/AppContext'
+import { NotificationContext, LoaderContext } from './contexts/AppContext'
 import AppHeader from './components/layout/Header'
 import Notification from './components/layout/Notification'
 import NFTForm from './components/NFTForm'
@@ -8,6 +8,7 @@ import Home from './pages/Home'
 // import Events from './pages/Events'
 import { CeloProvider, Alfajores, NetworkNames } from '@celo/react-celo'
 import '@celo/react-celo/lib/styles.css'
+import Loader from "./components/layout/Loader";
 // import './app.css'
 
 
@@ -37,7 +38,7 @@ const App = () => {
 
   const navigate = useNavigate()
 
-  // const [drawer, setDrawer] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [notification, setNotification] = useState('')
 
   const showEventForm = () => {
@@ -47,9 +48,11 @@ const App = () => {
   }
 
   return (
+    <LoaderContext.Provider value={{loading, setLoading}}>
     <NotificationContext.Provider value={{notification, setNotification}}>
       <AppHeader/>
       <NFTForm />
+      <Loader loading={loading}/>
       <Notification notification={notification} />
       <Routes>
         <Route path="/" element={<Home/>}/>
@@ -57,6 +60,7 @@ const App = () => {
       </Routes>
 
     </NotificationContext.Provider>
+    </LoaderContext.Provider>
   )
 }
 

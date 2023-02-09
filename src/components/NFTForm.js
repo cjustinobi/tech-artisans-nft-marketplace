@@ -1,7 +1,13 @@
 import { useState, useContext, useEffect } from 'react'
 import { useContract } from '../hooks'
-import { imageToIPFS, JSONToIPFS, nftContractAddress, formatPrice } from '../utils'
-import { NotificationContext } from '../contexts/AppContext'
+import {
+  imageToIPFS,
+  JSONToIPFS,
+  nftContractAddress,
+  formatPrice,
+  LIST_PRICE
+} from '../utils'
+import {LoaderContext, NotificationContext} from '../contexts/AppContext'
 import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
 import {useCelo} from "@celo/react-celo"
 
@@ -14,8 +20,8 @@ console.log(kit.connection)
   const nftContract = useContract(NFTMarketplace.abi, nftContractAddress)
 
   const { notification, setNotification } = useContext(NotificationContext)
+  const { setLoading } = useContext(LoaderContext)
 
-  const [loading, setLoading] = useState(false)
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [description, setDescription] = useState('default')
@@ -23,9 +29,13 @@ console.log(kit.connection)
 
   const createNFT = async () => {
 
-    if (isNotValid()) return setNotification('All fields are required')
+    if (!address) return setNotification({message: 'Connect wallet to continue', success: false})
+
+    if (isNotValid()) return setNotification({message: 'All fields are required', success: false})
 
     setLoading(true)
+
+    document.getElementById('nft-form').style.display = 'none'
 
     let CID = new Promise(async resolve => {
       const res = await imageToIPFS(image)
@@ -33,8 +43,6 @@ console.log(kit.connection)
     })
 
     CID = await CID
-
-    console.log('cid ', CID)
 
     const nftJson = {
       name,
@@ -45,11 +53,18 @@ console.log(kit.connection)
 
     const nftURI = await JSONToIPFS(nftJson)
 
-    const res = await nftContract.methods.createToken(formatPrice(price)).send({
-      from: address,
-      value: formatPrice()
-    })
-    console.log('nft res ', res)
+    try {
+      await nftContract.methods.createToken(nftURI, formatPrice(kit, price)).send({
+        from: address,
+        value: formatPrice(kit, LIST_PRICE)
+      })
+
+      setLoading(false)
+      setNotification({message: 'NFT successfully created', success: true})
+    } catch (e) {
+      setLoading(false)
+      setNotification({message: e.getMessage(), success: false})
+    }
   }
 
 
@@ -65,6 +80,16 @@ console.log(kit.connection)
     }
 
     return res
+  }
+
+  const resetForm = () => {
+    setName('')
+    setImage('')
+    setPrice('')
+    setDescription('')
+
+    const fieldIDs = ['name', 'price', 'formFile', 'desc']
+    fieldIDs.forEach(id => document.getElementById(id).value = '')
   }
 
   useEffect(() => {
