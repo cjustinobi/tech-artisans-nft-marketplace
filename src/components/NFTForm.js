@@ -54,7 +54,7 @@ console.log(kit.connection)
     const nftURI = await JSONToIPFS(nftJson)
 
     try {
-      await nftContract.methods.createToken(nftURI, formatPrice(kit, price)).send({
+      await nftContract.methods.createNFT(nftURI, formatPrice(kit, price)).send({
         from: address,
         value: formatPrice(kit, LIST_PRICE)
       })
@@ -90,6 +90,11 @@ console.log(kit.connection)
 
     const fieldIDs = ['name', 'price', 'formFile', 'desc']
     fieldIDs.forEach(id => document.getElementById(id).value = '')
+  }
+
+  const test = async () => {
+    const res = await nftContract.methods.getMyNFTs('1', address).call()
+    console.log(res)
   }
 
   useEffect(() => {
@@ -128,7 +133,7 @@ console.log(kit.connection)
             </div>
           </div>
           <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
-            <button type="button" className="inline-block px-6 py-2.5 bg-gray-300 text-white font-medium text-xs leading-tight uppercase rounded focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out" data-bs-dismiss="modal">Cancel</button>
+            <button onClick={test} type="button" className="inline-block px-6 py-2.5 bg-gray-300 text-white font-medium text-xs leading-tight uppercase rounded focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out" data-bs-dismiss="modal">Cancel</button>
             <button onClick={createNFT} type="button" className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
               Create NFT
             </button>

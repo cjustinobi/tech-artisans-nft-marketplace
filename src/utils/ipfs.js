@@ -37,3 +37,12 @@ export const JSONToIPFS = async(json) => {
 
 }
 
+export const getNFtMeta = async () => {
+  try {
+    const meta = await axios.get(IPFS_URL);
+    return JSON.parse(meta.data)
+  } catch (e) {
+    console.log({ e });
+  }
+}
+

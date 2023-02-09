@@ -1,9 +1,9 @@
-import MyNFTs from "../components/MyNFTs";
+import NFTs from '../components/NFTs'
 
 const Home = () => {
   return (
     <div>
-      <MyNFTs />
+      <NFTs />
     </div>
   )
 }

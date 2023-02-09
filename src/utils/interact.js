@@ -1,40 +1,35 @@
 
-import EventHub from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
-export const nftContractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138'
+export const nftContractAddress = '0x16bC29E54696a7890Ed354FD39411A6c2796CB82'
 
-// export const contract = (kit) => {
-//   // const kit = await getConnectedKit()
-//   return new kit.connection.web3.eth.Contract(EventHub.abi, eventHubContractAddress)
-// }
-//
-//
-// export const createNewEvent = async (contract, address, kit, { eventTimestamp, deposit, maxCapacity, CID, ID }) => {
-//
-//   try {
-//     const stableToken = await kit.contracts.getStableToken()
-//     const res = await contract.methods.createNewEvent(eventTimestamp, deposit, maxCapacity, CID, ID).send({
-//       from: address,
-//       feeCurrency: stableToken.address,
-//       gasLimit: '910000',
-//
-//     })
-//     console.log('res ', res)
-//     return {
-//       status: (
-//         <span>
-//           ✅{" "}
-//           <a target="_blank" href={`https://explorer.celo.org/alfajores/tx/${res.transactionHash}/token-transfers/`} rel="noreferrer">
-//             View the status of your transaction on Celo Explorer!
-//           </a>
-//           <br />
-//           ℹ️ Once the transaction is verified by the network, the message will
-//           be updated automatically.
-//         </span>
-//       ),
-//     };
-//   } catch (error) {
-//     return {
-//       status: "😥 " + error.message,
-//     };
-//   }
-// };
+export const getNfts = async (NFTContract) => {
+  try {
+    const nfts = [];
+    const NFTCount = await NFTContract.methods.getNFTCount().call()
+    // contract starts minting from index 1
+    for (let i = 1; i <= NFTCount; i++) {
+      const nft = new Promise(async (resolve) => {
+        const listing = await NFTContract.methods.getNFT(i).call();
+        // const res = await NFTContract.methods.tokenURI(i).call();
+        // const meta = await fetchNftMeta(res);
+
+        resolve(listing)
+        // resolve({
+        //   index: i,
+        //   nft: listing.nft,
+        //   tokenId: listing.tokenId,
+        //   price: listing.price,
+        //   seller: listing.seller,
+        //   forSale: listing.forSale,
+        //   owner: meta.owner,
+        //   name: meta.name,
+        //   image: meta.image,
+        //   description: meta.description,
+        // });
+      });
+      nfts.push(nft);
+    }
+    return Promise.all(nfts);
+  } catch (e) {
+    console.log({ e });
+  }
+}

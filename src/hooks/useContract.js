@@ -5,27 +5,21 @@ import { useCelo } from '@celo/react-celo'
 
 export const useContract = (abi, contractAddress) => {
   // debugger
-  // const { getConnectedKit, address } = useContractKit();
+  // const { getConnectedKit, address } = useContractKit()
   const { kit, address } = useCelo()
-  const [contract, setContract] = useState(null);
+  const [contract, setContract] = useState(null)
 
   const getContract = useCallback(async () => {
-    // const kit = await getConnectedKit();
+    // const kit = await getConnectedKit()
 
     // get a contract interface to interact with
     setContract(new kit.connection.web3.eth.Contract(abi, contractAddress))
-  }, [kit, abi, contractAddress]);
+  }, [kit, abi, contractAddress])
 
   useEffect(() => {
-    if (address) getContract();
-  }, [address, getContract]);
+    if (address) getContract()
+  }, [address, getContract])
 
-  return contract;
-};
+  return contract
+}
 
-// export const useContract = async () => {
-//   const { kit } = useCelo()
-//   const [contract, setContract] = useState('')
-//   setContract(new kit.connection.web3.eth.Contract(EventHub.abi, eventHubContractAddress))
-//   return [contract]
-// }

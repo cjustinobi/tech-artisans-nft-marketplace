@@ -1,4 +1,23 @@
-const MyNFTs = () => {
+import {useEffect} from "react";
+import { getNfts, nftContractAddress } from "../utils";
+import { useContract } from "../hooks";
+import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
+
+
+const NFTs = () => {
+
+  const NFTContract = useContract(NFTMarketplace.abi, nftContractAddress)
+
+  useEffect(() => {
+    const getNFTsHandler = async () => {
+      const res = await getNfts(NFTContract)
+      console.log(res)
+    }
+
+    getNFTsHandler()
+  })
+
+
   return (
     <section class="overflow-hidden text-gray-700 ">
       <div class="container px-5 py-2 mx-auto lg:pt-12 lg:px-32">
@@ -46,4 +65,4 @@ const MyNFTs = () => {
 }
 
 
-export default MyNFTs
+export default NFTs
