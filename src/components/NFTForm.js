@@ -103,7 +103,7 @@ console.log(kit.connection)
         setNotification('')
       }, 2000)
     }
-  }, [notification])
+  }, [notification, setNotification])
 
   return (
 

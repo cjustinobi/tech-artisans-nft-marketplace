@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract NFTMarketplace is ERC721URIStorage {
+contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
     using Counters for Counters.Counter;
 
@@ -28,7 +29,12 @@ contract NFTMarketplace is ERC721URIStorage {
         address payable owner;
         address payable seller;
         uint256 price;
-        bool currentlyListed;
+        bool forSale;
+    }
+
+    struct Seller {
+        uint256 sales;
+        uint256 earnings;
     }
 
     // The event emitted when a token is successfully listed
@@ -37,17 +43,53 @@ contract NFTMarketplace is ERC721URIStorage {
         address owner,
         address seller,
         uint256 price,
-        bool currentlyListed
+        bool forSale
     );
 
     // This mapping maps tokenId to token info and is helpful when retrieving details about a tokenId
     mapping(uint256 => ListedNFT) private idToListedNFT;
 
-    mapping (address => ListedNFT[]) myNFTs;
+    mapping(address => ListedNFT[]) myNFTs;
+
+    mapping(address => Seller) sellers;
+
+    mapping(address => bool) public sellerExist;
 
     constructor() ERC721("ArtisansNFTMarketplace", "ANTMKT") {
         owner = payable(msg.sender);
     }
+
+    // Required overrides functions
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
+
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+    // Required overrides functions ends here
 
     function updateListPrice(uint256 _listPrice) public payable {
         require(owner == msg.sender, "Only owner can update listing price");
@@ -125,7 +167,7 @@ contract NFTMarketplace is ERC721URIStorage {
         address _owner,
         address _seller,
         uint256 _price,
-        bool _currentlyListed
+        bool _forSale
     ) {
 
 
@@ -136,7 +178,7 @@ contract NFTMarketplace is ERC721URIStorage {
       _myNFTs.owner,
       _myNFTs.seller,
       _myNFTs.price,
-      _myNFTs.currentlyListed
+      _myNFTs.forSale
       );
     }
 }
