@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import { NotificationContext, LoaderContext } from './contexts/AppContext'
 import AppHeader from './components/layout/Header'
+import Connect from './components/layout/Connect'
 import Notification from './components/layout/Notification'
 import NFTForm from './components/NFTForm'
 import Home from './pages/Home'
@@ -49,17 +50,18 @@ const App = () => {
 
   return (
     <LoaderContext.Provider value={{loading, setLoading}}>
-    <NotificationContext.Provider value={{notification, setNotification}}>
-      <AppHeader/>
-      <NFTForm />
-      <Loader loading={loading}/>
-      <Notification notification={notification} />
-      <Routes>
-        <Route path="/" element={<Home/>}/>
-        {/*<Route path="/events" element={<Events/>}/>*/}
-      </Routes>
+      <NotificationContext.Provider value={{notification, setNotification}}>
+        <AppHeader/>
+        <NFTForm />
+        <Loader />
+        <Connect />
+        <Notification />
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          {/*<Route path="/events" element={<Events/>}/>*/}
+        </Routes>
 
-    </NotificationContext.Provider>
+      </NotificationContext.Provider>
     </LoaderContext.Provider>
   )
 }

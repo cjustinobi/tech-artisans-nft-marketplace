@@ -20,7 +20,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
     // Owner is the contract address that created the smart contract
     address payable owner;
 
-    // The fee charged by the marketplace to be allowed to list an NFT
+    // The fee charged by the marketplace to be allowed to list an NFTCard
     uint256 listPrice = 0.01 ether;
 
     // The structure to store info about a listed token
@@ -121,10 +121,10 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
         uint256 newNFTId = _NFTIdCounter.current();
 
-        //Mint the NFT with tokenId newTokenId to the address who called createToken
+        //Mint the NFTCard with tokenId newTokenId to the address who called createToken
         _safeMint(msg.sender, newNFTId);
 
-        //Map the tokenId to the NFTURI (which is an IPFS URL with the NFT metadata)
+        //Map the tokenId to the NFTURI (which is an IPFS URL with the NFTCard metadata)
         _setTokenURI(newNFTId, NFTURI);
 
         //Helper function to update Global variables and emit an event

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { getNfts, nftContractAddress } from '../utils'
 import { useContract } from '../hooks'
 import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
-import NFT from './NFT'
+import NFTCard from './NFTCard'
 
 
 const NFTs = () => {
@@ -50,7 +50,7 @@ const NFTs = () => {
     <section class="overflow-hidden text-gray-700 ">
       <div class="container px-5 py-2 mx-auto lg:pt-12 lg:px-32">
         <div class="flex flex-wrap -m-1 md:-m-2">
-          {NFTs && NFTs.map(nft => <NFT nft={nft}  key={nft.tokenId} />)}
+          {NFTs && NFTs.map(nft => <NFTCard nft={nft} key={nft.tokenId} />)}
         </div>
       </div>
     </section>

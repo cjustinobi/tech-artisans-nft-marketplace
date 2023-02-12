@@ -4,7 +4,7 @@ import {
   imageToIPFS,
   JSONToIPFS,
   nftContractAddress,
-  formatPrice,
+  priceToWei,
   LIST_PRICE
 } from '../utils'
 import {LoaderContext, NotificationContext} from '../contexts/AppContext'
@@ -16,7 +16,6 @@ import {useCelo} from "@celo/react-celo"
 const NFTForm = () => {
 
   const { kit, address } = useCelo()
-console.log(kit.connection)
   const nftContract = useContract(NFTMarketplace.abi, nftContractAddress)
 
   const { notification, setNotification } = useContext(NotificationContext)
@@ -54,9 +53,9 @@ console.log(kit.connection)
     const nftURI = await JSONToIPFS(nftJson)
 
     try {
-      await nftContract.methods.createNFT(nftURI, formatPrice(kit, price)).send({
+      await nftContract.methods.createNFT(nftURI, priceToWei(kit, price)).send({
         from: address,
-        value: formatPrice(kit, LIST_PRICE)
+        value: priceToWei(kit, LIST_PRICE)
       })
 
       setLoading(false)
