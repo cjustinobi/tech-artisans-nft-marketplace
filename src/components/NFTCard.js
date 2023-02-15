@@ -3,7 +3,7 @@ import {
   formatPrice,
   nftContractAddress,
   buyNFT,
-  sellNFT,
+  saleNFT,
   cancelNFT,
   toCheckSum
 } from '../utils'
@@ -20,8 +20,8 @@ const NFTCard = ({ nft, updateUI }) => {
 
   const { kit, address } = useCelo()
 
-  const sellNFTHandler = async (nft) => {
-    const res = await sellNFT(NFTContract, nft.tokenId, address, nft.price, kit)
+  const saleNFTHandler = async (nft) => {
+    const res = await saleNFT(NFTContract, nft.tokenId, address, nft.price, kit)
     console.log('sell ', res)
     if (res) {
       updateUI()
@@ -44,13 +44,13 @@ const NFTCard = ({ nft, updateUI }) => {
     <p className="px-4 py-2">{formatPrice(kit, nft.price)} CELO</p>
 
     {nft.forSale === true && nft.seller !== toCheckSum(kit, address) && (
-      <button onClick={() => buyNFT(NFTContract, nft.tokenId)} className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
+      <button onClick={() => buyNFT(NFTContract, nft, address, kit)} className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
         Buy NFT
       </button>
     )}
 
     {nft.forSale === false && nft.seller === toCheckSum(kit, address) && (
-      <button onClick={() => sellNFTHandler(nft)} className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
+      <button onClick={() => saleNFTHandler(nft)} className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
         Sell NFT
       </button>
     )}

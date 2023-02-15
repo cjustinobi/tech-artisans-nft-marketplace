@@ -53,10 +53,12 @@ const NFTForm = () => {
     const nftURI = await JSONToIPFS(nftJson)
 
     try {
-      await nftContract.methods.createNFT(nftURI, priceToWei(kit, price)).send({
+      const res = await nftContract.methods.createNFT(nftURI, priceToWei(kit, price)).send({
         from: address,
         value: priceToWei(kit, LIST_PRICE)
       })
+
+      console.log('res ', res)
 
       setLoading(false)
       setNotification({message: 'NFT successfully created', success: true})

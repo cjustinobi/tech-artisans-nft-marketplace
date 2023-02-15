@@ -200,21 +200,21 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
 
 
-    function saleNFT(uint256 tokenId) public payable {
+    function buyNFT(uint256 tokenId) public payable {
         uint256 price = idToListedNFT[tokenId].price;
         address seller = idToListedNFT[tokenId].seller;
         require(msg.value == price, "Please submit the asking price in order to complete the purchase");
 
         // Update the details of the token.
-        idToListedNFT[tokenId].forSale = true;
+        //idToListedNFT[tokenId].forSale = true;
         idToListedNFT[tokenId].seller = payable(msg.sender);
         _itemsSold.increment();
 
-        // Actually transfer the token to the new owner.
-        _transfer(address(this), msg.sender, tokenId);
+        // Actually transfer the token to the contract.
+        //_transfer(msg.sender, address(this), tokenId);
 
         // Approve the marketplace to sell NFTs on your behalf.
-        approve(address(this), tokenId);
+         //approve(msg.sender, tokenId);
 
         // Transfer the listing fee to the marketplace creator.
         payable(owner).transfer(listPrice);
@@ -227,13 +227,22 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
         _seller.earnings += price;
     }
 
+    function saleNFT(uint256 tokenId) public {
+             ListedNFT storage _nft = idToListedNFT[tokenId];
+             require(_nft.seller == msg.sender, "Only NFT owners can perform this operation");
+             require(_nft.forSale == false, "Item already listed for sale");
+
+             // Transfer the listing fee to the marketplace creator.
+             payable(owner).transfer(listPrice);
+             _transfer(msg.sender, address(this), tokenId);
+             _nft.forSale = true;
+          }
+
     function cancel(uint256 tokenId) public {
          ListedNFT storage _nft = idToListedNFT[tokenId];
          require(_nft.seller == msg.sender, "Only NFT owners can perform this operation");
          require(_nft.forSale == true, "Item not listed for sale");
-         
-          // Approve the marketplace to sell NFTs on your behalf.
-	    approve(address(this), tokenId);
+
          _transfer(address(this), msg.sender, tokenId);
          _nft.forSale = false;
       }
