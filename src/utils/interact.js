@@ -1,6 +1,6 @@
 import { getNFTMeta } from './ipfs'
 
-export const nftContractAddress = '0xdc7C33faFd8ae1B15052B4530DBB15e7ff997192'
+export const nftContractAddress = '0x9C0767B1a34d327396E0267B3D3e7f45534519E5'
 
 export const getNfts = async (NFTContract) => {
   try {
@@ -33,4 +33,32 @@ export const getNfts = async (NFTContract) => {
   } catch (e) {
     console.log({ e })
   }
+}
+
+export const buyNFT = async (NFTContract, tokenId) => {
+
+  const NFTCount = await NFTContract.methods.buyNFT(tokenId).send({
+
+  })
+
+
+}
+
+export const sellNFT = async (NFTContract, tokenId, address, price, kit) => {
+
+  const trans = await NFTContract.methods.saleNFT(tokenId).send({
+    from: address,
+    value: price
+  })
+  console.log('seell tran ', trans)
+
+}
+
+export const cancelNFT = async (NFTContract, tokenId, address) => {
+
+  const trans = await NFTContract.methods.cancel(tokenId).send({
+    from: address
+  })
+  console.log(trans)
+
 }

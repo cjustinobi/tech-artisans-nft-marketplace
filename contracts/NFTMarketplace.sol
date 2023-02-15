@@ -100,13 +100,28 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
         return listPrice;
     }
 
-    function getLatestIdToListedNFT() public view returns (ListedNFT memory) {
-        uint256 currentNFTId = _NFTIdCounter.current();
-        return idToListedNFT[currentNFTId];
-    }
+    function getNFT(uint256 NFTId) public view returns (
+        uint256 _NFTId,
+        address _owner,
+        address _seller,
+        uint256 _price,
+        bool _forSale,
+        uint256 _sales,
+        uint256 _earnings
+    ) {
+        ListedNFT memory _nft = idToListedNFT[NFTId];
 
-    function getNFT(uint256 NFTId) public view returns (ListedNFT memory) {
-        return idToListedNFT[NFTId];
+        Seller memory _NFTseller = sellers[_nft.seller];
+
+        return (
+        _nft.NFTId,
+        _nft.owner,
+        _nft.seller,
+        _nft.price,
+        _nft.forSale,
+        _NFTseller.sales,
+        _NFTseller.earnings
+      );
     }
 
     function getNFTCount() public view returns (uint256) {
@@ -136,12 +151,13 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
     }
 
     function createListedNFT(uint256 NFTId, uint256 price) private {
-        //Make sure the sender sent enough ETH to pay for listing
+        // Make sure the sender sent enough ETH to pay for listing
         require(msg.value == listPrice, "Hopefully sending the correct price");
-        //Just sanity check
+        // Just sanity check
         require(price > 0, "Make sure the price isn't negative");
 
-        //Update the mapping of tokenId's to Token details, useful for retrieval functions
+        // Update the mapping of tokenId's to Token details, useful for retrieval functions.
+
         idToListedNFT[NFTId] = ListedNFT(
             NFTId,
             payable(address(this)),
@@ -181,4 +197,44 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
       _myNFTs.forSale
       );
     }
+
+
+
+    function saleNFT(uint256 tokenId) public payable {
+        uint256 price = idToListedNFT[tokenId].price;
+        address seller = idToListedNFT[tokenId].seller;
+        require(msg.value == price, "Please submit the asking price in order to complete the purchase");
+
+        // Update the details of the token.
+        idToListedNFT[tokenId].forSale = true;
+        idToListedNFT[tokenId].seller = payable(msg.sender);
+        _itemsSold.increment();
+
+        // Actually transfer the token to the new owner.
+        _transfer(address(this), msg.sender, tokenId);
+
+        // Approve the marketplace to sell NFTs on your behalf.
+        approve(address(this), tokenId);
+
+        // Transfer the listing fee to the marketplace creator.
+        payable(owner).transfer(listPrice);
+
+        // Transfer the proceeds from the sale to the seller of the NFTCard.
+        payable(seller).transfer(msg.value);
+
+        Seller storage _seller = sellers[seller];
+        _seller.sales ++;
+        _seller.earnings += price;
+    }
+
+    function cancel(uint256 tokenId) public {
+         ListedNFT storage _nft = idToListedNFT[tokenId];
+         require(_nft.seller == msg.sender, "Only NFT owners can perform this operation");
+         require(_nft.forSale == true, "Item not listed for sale");
+         
+          // Approve the marketplace to sell NFTs on your behalf.
+	    approve(address(this), tokenId);
+         _transfer(address(this), msg.sender, tokenId);
+         _nft.forSale = false;
+      }
 }
