@@ -26,7 +26,6 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
     // The structure to store info about a listed token
     struct ListedNFT {
         uint256 NFTId;
-        address payable owner;
         address payable seller;
         uint256 price;
         bool forSale;
@@ -40,7 +39,6 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
     // The event emitted when a token is successfully listed
     event NFTListedSuccess (
         uint256 indexed tokenId,
-        address owner,
         address seller,
         uint256 price,
         bool forSale
@@ -102,7 +100,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
     function getNFT(uint256 NFTId) public view returns (
         uint256 _NFTId,
-        address _owner,
+        //address _owner,
         address _seller,
         uint256 _price,
         bool _forSale,
@@ -115,7 +113,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
         return (
         _nft.NFTId,
-        _nft.owner,
+        //_nft.owner,
         _nft.seller,
         _nft.price,
         _nft.forSale,
@@ -142,10 +140,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
         //Map the tokenId to the NFTURI (which is an IPFS URL with the NFTCard metadata)
         _setTokenURI(newNFTId, NFTURI);
 
-        //Helper function to update Global variables and emit an event
-        createListedNFT(newNFTId, price);
-
-        myNFTs[msg.sender].push(ListedNFT(newNFTId, payable(address(this)), payable(msg.sender), price, false));
+        idToListedNFT[newNFTId] = ListedNFT(newNFTId, payable(msg.sender), price, false );
 
         return newNFTId;
     }
@@ -160,27 +155,22 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
         idToListedNFT[NFTId] = ListedNFT(
             NFTId,
-            payable(address(this)),
             payable(msg.sender),
             price,
             true
         );
 
+        myNFTs[msg.sender].push(ListedNFT(NFTId, payable(msg.sender), price, true));
+
         _transfer(msg.sender, address(this), NFTId);
         //Emit the event for successful transfer. The frontend parses this message and updates the end user
-        emit NFTListedSuccess(
-            NFTId,
-            address(this),
-            msg.sender,
-            price,
-            true
-        );
+
     }
 
     function getMyNFTs (uint256 _index, address _callerAddress) public view returns (
 
         uint256 _NFTId,
-        address _owner,
+        //address _owner,
         address _seller,
         uint256 _price,
         bool _forSale
@@ -191,7 +181,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
       return (
       _myNFTs.NFTId,
-      _myNFTs.owner,
+      //_myNFTs.owner,
       _myNFTs.seller,
       _myNFTs.price,
       _myNFTs.forSale
@@ -201,34 +191,37 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
 
     function buyNFT(uint256 tokenId) public payable {
-        uint256 price = idToListedNFT[tokenId].price;
-        address seller = idToListedNFT[tokenId].seller;
-        require(msg.value == price, "Please submit the asking price in order to complete the purchase");
+      ListedNFT storage _nft = idToListedNFT[tokenId];
+      address seller = idToListedNFT[tokenId].seller;
+        require(msg.value == _nft.price, "Please submit the asking price in order to complete the purchase");
 
         // Update the details of the token.
-        //idToListedNFT[tokenId].forSale = true;
-        idToListedNFT[tokenId].seller = payable(msg.sender);
+        _nft.forSale = false;
+        _nft.seller = payable(msg.sender);
         _itemsSold.increment();
 
         // Actually transfer the token to the contract.
-        //_transfer(msg.sender, address(this), tokenId);
+        _transfer(address(this), msg.sender, tokenId);
 
         // Approve the marketplace to sell NFTs on your behalf.
          //approve(msg.sender, tokenId);
 
-        // Transfer the listing fee to the marketplace creator.
-        payable(owner).transfer(listPrice);
+
 
         // Transfer the proceeds from the sale to the seller of the NFTCard.
         payable(seller).transfer(msg.value);
 
+        myNFTs[msg.sender].push(ListedNFT(tokenId, payable(msg.sender), _nft.price, false));
+
         Seller storage _seller = sellers[seller];
         _seller.sales ++;
-        _seller.earnings += price;
+        _seller.earnings += _nft.price;
     }
 
-    function saleNFT(uint256 tokenId) public {
+    function sellNFT(uint256 tokenId) public payable {
              ListedNFT storage _nft = idToListedNFT[tokenId];
+             require(_nft.price > 0, "Make sure the price isn't negative");
+             require(msg.value == listPrice, "Hopefully sending the correct price");
              require(_nft.seller == msg.sender, "Only NFT owners can perform this operation");
              require(_nft.forSale == false, "Item already listed for sale");
 
@@ -236,6 +229,13 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
              payable(owner).transfer(listPrice);
              _transfer(msg.sender, address(this), tokenId);
              _nft.forSale = true;
+
+             emit NFTListedSuccess(
+                         tokenId,
+                         msg.sender,
+                         _nft.price,
+                         true
+                     );
           }
 
     function cancel(uint256 tokenId) public {

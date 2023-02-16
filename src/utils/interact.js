@@ -1,7 +1,7 @@
 import { getNFTMeta } from './ipfs'
-import {priceToWei} from "./helpers";
+import {formatPrice} from "./helpers";
 
-export const nftContractAddress = '0x64eB3858F9acC033943E61A6a24c8D07ef1b09B2'
+export const nftContractAddress = '0x10b0b6a4dA5F1aC13B6d7CFD8f064B2f05C75d0a'
 
 export const getNfts = async (NFTContract) => {
   try {
@@ -16,7 +16,7 @@ export const getNfts = async (NFTContract) => {
         const NFTURI = await NFTContract.methods.tokenURI(i).call()
 
         console.log('owner ', await NFTContract.methods.ownerOf(i).call())
-        console.log('balanceOf ', await NFTContract.methods.balanceOf(NFTItem._seller).call())
+        // console.log('balanceOf ', await NFTContract.methods.balanceOf(NFTItem._seller).call())
         const NFTMeta = await getNFTMeta(NFTURI)
 
         resolve({
@@ -48,11 +48,13 @@ export const buyNFT = async (NFTContract, NFT, address, kit) => {
 
 }
 
-export const saleNFT = async (NFTContract, tokenId, address, price, kit) => {
+export const sellNFT = async (NFTContract, tokenId, address, price, kit) => {
 
-  const trans = await NFTContract.methods.saleNFT(tokenId).send({
+  const listPrice = await NFTContract.methods.getListPrice().call()
+
+  const trans = await NFTContract.methods.sellNFT(tokenId).send({
     from: address,
-    value: price
+    value: listPrice
   })
   console.log('seell tran ', trans)
 
