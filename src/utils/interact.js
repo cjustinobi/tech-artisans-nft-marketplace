@@ -1,7 +1,7 @@
 import { getNFTMeta } from './ipfs'
 import {formatPrice, priceToWei} from "./helpers";
 
-export const nftContractAddress = '0x816C9E7d831e98302dAd9231CeB10Cf7AE28806A'
+export const nftContractAddress = '0x646F73126ab10289D64a1A0f1Ef95110771a5353'
 
 export const createNFT = async (NFTContract, NFTURI, price, address) => {
   try {
@@ -82,11 +82,11 @@ export const cancelNFT = async (NFTContract, tokenId, address) => {
 export const getMyNFTs = async (NFTContract, address) => {
   try {
     // debugger
-    const transLength = await NFTContract.methods.getMyNFTCount(address).call()
+    const NFTCount = await NFTContract.methods.getMyNFTCount(address).call()
 
     let NFTs = []
 
-    for (let i = 0; i < transLength; i++) {
+    for (let i = 1; i <= NFTCount; i++) {
       const NFT = new Promise(async resolve => {
         const NFTItem = await NFTContract.methods.getMyNFTs(i, address).call()
 
