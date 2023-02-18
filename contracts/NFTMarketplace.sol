@@ -194,6 +194,8 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
         myNFTs[msg.sender][tokenId] = ListedNFT(tokenId, payable(msg.sender), _listedNFT.price, false);
 
+        delete myNFTs[seller][tokenId];
+
         Seller storage _seller = sellers[seller];
         Seller storage _buyer = sellers[msg.sender];
 

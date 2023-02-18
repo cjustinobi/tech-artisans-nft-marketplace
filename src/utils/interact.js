@@ -1,7 +1,7 @@
 import { getNFTMeta } from './ipfs'
 import {formatPrice, priceToWei} from "./helpers";
 
-export const nftContractAddress = '0x646F73126ab10289D64a1A0f1Ef95110771a5353'
+export const nftContractAddress = '0x27a793522c490FA9d9ba525896513a1308738994'
 
 export const createNFT = async (NFTContract, NFTURI, price, address) => {
   try {
