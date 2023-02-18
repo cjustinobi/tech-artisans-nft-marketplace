@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { useCelo } from '@celo/react-celo'
 import { truncate } from '../../utils'
 
@@ -36,14 +36,12 @@ const AppHeader = () => {
           <a className="flex items-center text-gray-900 hover:text-gray-900 focus:text-gray-900 mt-2 lg:mt-0 mr-1" href="#"></a>
           <ul className="navbar-nav flex flex-col pl-0 list-style-none mr-auto">
             <li className="nav-item p-2">
-              <a className="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="#">Dashboard</a>
+              <Link to={'/'} className="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="#">NFTs</Link>
             </li>
             <li className="nav-item p-2">
-              <a className="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="#">Team</a>
+              <Link to={'/my-nfts'} className="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="#">My NFTs</Link>
             </li>
-            <li className="nav-item p-2">
-              <a className="nav-link text-gray-500 hover:text-gray-700 focus:text-gray-700 p-0" href="#">Projects</a>
-            </li>
+
           </ul>
         </div>
         <div className="flex items-center relative">

@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import { NotificationContext, LoaderContext } from './contexts/AppContext'
 import AppHeader from './components/layout/Header'
 import Connect from './components/layout/Connect'
 import Notification from './components/layout/Notification'
 import NFTForm from './components/NFTForm'
 import Home from './pages/Home'
-// import Events from './pages/Events'
+import MyNFTs from './pages/MyNFTs'
 import { CeloProvider, Alfajores, NetworkNames } from '@celo/react-celo'
 import '@celo/react-celo/lib/styles.css'
 import Loader from "./components/layout/Loader";
@@ -58,7 +58,7 @@ const App = () => {
         <Notification />
         <Routes>
           <Route path="/" element={<Home/>}/>
-          {/*<Route path="/events" element={<Events/>}/>*/}
+          <Route path="/my-nfts" element={<MyNFTs/>}/>
         </Routes>
 
       </NotificationContext.Provider>

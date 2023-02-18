@@ -1,7 +1,15 @@
 import { getNFTMeta } from './ipfs'
-import {formatPrice} from "./helpers";
+import {formatPrice, priceToWei} from "./helpers";
 
-export const nftContractAddress = '0x10b0b6a4dA5F1aC13B6d7CFD8f064B2f05C75d0a'
+export const nftContractAddress = '0x816C9E7d831e98302dAd9231CeB10Cf7AE28806A'
+
+export const createNFT = async (NFTContract, NFTURI, price, address) => {
+  try {
+    return await NFTContract.methods.createNFT(NFTURI, price).send({from: address})
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 export const getNfts = async (NFTContract) => {
   try {
@@ -24,10 +32,12 @@ export const getNfts = async (NFTContract) => {
           price: NFTItem._price,
           seller: NFTItem._seller,
           forSale: NFTItem._forSale,
+          sales: NFTItem._sales,
+          earnings: NFTItem._earnings,
           name: NFTMeta.name,
           image: NFTMeta.image,
           initialPrice: NFTMeta.price,
-          description: NFTMeta.description,
+          description: NFTMeta.description
         })
       })
       NFTs.push(NFT)
@@ -48,7 +58,7 @@ export const buyNFT = async (NFTContract, NFT, address, kit) => {
 
 }
 
-export const sellNFT = async (NFTContract, tokenId, address, price, kit) => {
+export const sellNFT = async (NFTContract, tokenId, address) => {
 
   const listPrice = await NFTContract.methods.getListPrice().call()
 
@@ -56,15 +66,51 @@ export const sellNFT = async (NFTContract, tokenId, address, price, kit) => {
     from: address,
     value: listPrice
   })
-  console.log('seell tran ', trans)
 
+  console.log(trans)
+return trans
 }
 
 export const cancelNFT = async (NFTContract, tokenId, address) => {
 
-  const trans = await NFTContract.methods.cancel(tokenId).send({
+  return await NFTContract.methods.cancel(tokenId).send({
     from: address
   })
-  console.log(trans)
 
+}
+
+export const getMyNFTs = async (NFTContract, address) => {
+  try {
+    // debugger
+    const transLength = await NFTContract.methods.getMyNFTCount(address).call()
+
+    let NFTs = []
+
+    for (let i = 0; i < transLength; i++) {
+      const NFT = new Promise(async resolve => {
+        const NFTItem = await NFTContract.methods.getMyNFTs(i, address).call()
+
+        const NFTURI = await NFTContract.methods.tokenURI(NFTItem._NFTId).call()
+
+        const NFTMeta = await getNFTMeta(NFTURI)
+
+        resolve({
+          tokenId: NFTItem._NFTId,
+          price: NFTItem._price,
+          seller: NFTItem._seller,
+          forSale: NFTItem._forSale,
+          name: NFTMeta.name,
+          image: NFTMeta.image,
+          initialPrice: NFTMeta.price,
+          description: NFTMeta.description,
+        })
+      })
+      NFTs.push(NFT)
+    }
+
+    return Promise.all(NFTs)
+
+  } catch (e) {
+    console.log(e)
+  }
 }

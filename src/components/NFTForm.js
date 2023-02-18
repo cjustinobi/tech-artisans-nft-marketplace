@@ -1,11 +1,11 @@
 import { useState, useContext, useEffect } from 'react'
 import { useContract } from '../hooks'
 import {
+  createNFT,
   imageToIPFS,
   JSONToIPFS,
   nftContractAddress,
-  priceToWei,
-  LIST_PRICE
+  priceToWei
 } from '../utils'
 import {LoaderContext, NotificationContext} from '../contexts/AppContext'
 import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
@@ -16,7 +16,7 @@ import {useCelo} from "@celo/react-celo"
 const NFTForm = () => {
 
   const { kit, address } = useCelo()
-  const nftContract = useContract(NFTMarketplace.abi, nftContractAddress)
+  const NFTContract = useContract(NFTMarketplace.abi, nftContractAddress)
 
   const { notification, setNotification } = useContext(NotificationContext)
   const { setLoading } = useContext(LoaderContext)
@@ -26,7 +26,7 @@ const NFTForm = () => {
   const [description, setDescription] = useState('default')
   const [image, setImage] = useState('')
 
-  const createNFT = async () => {
+  const createNFTHandler = async () => {
 
     if (!address) return setNotification({message: 'Connect wallet to continue', success: false})
 
@@ -50,22 +50,14 @@ const NFTForm = () => {
       image: CID
     }
 
-    const nftURI = await JSONToIPFS(nftJson)
+    const NFTURI = await JSONToIPFS(nftJson)
 
-    try {
-      const res = await nftContract.methods.createNFT(nftURI, priceToWei(kit, price)).send({
-        from: address,
-        value: priceToWei(kit, LIST_PRICE)
-      })
+    await createNFT(NFTContract, NFTURI, priceToWei(kit, price), address)
 
-      console.log('res ', res)
+    setLoading(false)
+    setNotification({message: 'NFT successfully created', success: true})
+    resetForm()
 
-      setLoading(false)
-      setNotification({message: 'NFT successfully created', success: true})
-    } catch (e) {
-      setLoading(false)
-      setNotification({message: e.getMessage(), success: false})
-    }
   }
 
 
@@ -94,7 +86,7 @@ const NFTForm = () => {
   }
 
   const test = async () => {
-    const res = await nftContract.methods.getMyNFTs('1', address).call()
+    const res = await NFTContract.methods.getMyNFTs('1', address).call()
     console.log(res)
   }
 
@@ -135,7 +127,7 @@ const NFTForm = () => {
           </div>
           <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
             <button onClick={test} type="button" className="inline-block px-6 py-2.5 bg-gray-300 text-white font-medium text-xs leading-tight uppercase rounded focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out" data-bs-dismiss="modal">Cancel</button>
-            <button onClick={createNFT} type="button" className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
+            <button onClick={createNFTHandler} type="button" className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out ml-1">
               Create NFT
             </button>
           </div>

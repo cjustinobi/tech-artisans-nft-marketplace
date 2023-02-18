@@ -21,11 +21,8 @@ const NFTCard = ({ nft, updateUI }) => {
   const { kit, address } = useCelo()
 
   const sellNFTHandler = async (nft) => {
-    const res = await sellNFT(NFTContract, nft.tokenId, address, nft.price, kit)
-    console.log('sell ', res)
-    if (res) {
-      updateUI()
-    }
+    await sellNFT(NFTContract, nft.tokenId, address, nft.price, kit)
+    updateUI()
   }
 
   const cancelNFTHandler = async (tokenId) => {
