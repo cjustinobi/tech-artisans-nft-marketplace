@@ -11,7 +11,7 @@ const MyNFTs = () => {
 
   const { address } = useCelo()
 
-  const { setLoading } = useContext(LoaderContext)
+    const { setLoading } = useContext(LoaderContext)
 
   const [NFTs, setNFTs] = useState(undefined)
 
@@ -24,6 +24,7 @@ const MyNFTs = () => {
     setLoading(true)
     const NFTs = await getMyNFTs(NFTContract, address)
     setLoading(false)
+    // console.log('mynNFft ', NFTs)
     setNFTs(NFTs)
   }
   useEffect(() => {
@@ -37,6 +38,7 @@ const MyNFTs = () => {
       <div class="container px-5 py-2 mx-auto lg:pt-12 lg:px-32">
         <div class="flex flex-wrap -m-1 md:-m-2">
           {NFTs && NFTs.map(nft => <NFTCard nft={nft} key={nft.tokenId} updateUI={updateUI} />)}
+          {NFTs && NFTs.length === 0 && (<p>No Items found</p>)}
         </div>
       </div>
     </section>

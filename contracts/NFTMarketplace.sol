@@ -31,6 +31,14 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
         bool forSale;
     }
 
+      struct MyNFT {
+        uint256 NFTId;
+        address payable seller;
+        uint256 price;
+        bool forSale;
+        bool sold;
+    }
+
     struct Seller {
         uint256 sales;
         uint256 earnings;
@@ -48,7 +56,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
     // This mapping maps tokenId to token info and is helpful when retrieving details about a tokenId
     mapping(uint256 => ListedNFT) private idToListedNFT;
 
-    mapping(address => mapping(uint256 => ListedNFT)) public myNFTs;
+    mapping(address => mapping(uint256 => MyNFT)) public myNFTs;
 
     mapping(address => Seller) sellers;
 
@@ -142,7 +150,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
 
         idToListedNFT[newNFTId] = ListedNFT(newNFTId, payable(msg.sender), price, false );
 
-        myNFTs[msg.sender][newNFTId] = ListedNFT(newNFTId, payable(msg.sender), price, false);
+        myNFTs[msg.sender][newNFTId] = MyNFT(newNFTId, payable(msg.sender), price, false, false);
 
         Seller storage _NFTseller = sellers[msg.sender];
         _NFTseller.NFTCounts ++;
@@ -156,22 +164,26 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
         address _seller,
         uint256 _price,
         bool _forSale,
+        bool _sold,
         uint256 _sales,
         uint256 _earnings
     ) {
 
 
       Seller storage _NFTseller = sellers[_callerAddress];
-      ListedNFT storage _myNFTs = myNFTs[_callerAddress][_index];
+      MyNFT storage _myNFT = myNFTs[_callerAddress][_index];
 
-      return (
-      _myNFTs.NFTId,
-      _myNFTs.seller,
-      _myNFTs.price,
-      _myNFTs.forSale,
-      _NFTseller.sales,
-      _NFTseller.earnings
-      );
+
+        return (
+            _myNFT.NFTId,
+            _myNFT.seller,
+            _myNFT.price,
+            _myNFT.forSale,
+            _myNFT.sold,
+            _NFTseller.sales,
+            _NFTseller.earnings
+        );
+
     }
 
 
@@ -192,15 +204,17 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
         // Transfer the proceeds from the sale to the seller of the NFTCard.
         payable(seller).transfer(msg.value);
 
-        myNFTs[msg.sender][tokenId] = ListedNFT(tokenId, payable(msg.sender), _listedNFT.price, false);
+        myNFTs[msg.sender][tokenId] = MyNFT(tokenId, payable(msg.sender), _listedNFT.price, false, false);
+        myNFTs[seller][tokenId] = MyNFT(tokenId, payable(seller), _listedNFT.price, false, true);
 
-        delete myNFTs[seller][tokenId];
+        //delete myNFTs[seller][tokenId];
 
         Seller storage _seller = sellers[seller];
         Seller storage _buyer = sellers[msg.sender];
 
         _seller.sales ++;
         _seller.earnings += _listedNFT.price;
+        //_seller.NFTCounts --;
         _buyer.NFTCounts ++;
     }
 
@@ -212,7 +226,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
          require(_listedNFT.seller == msg.sender, "Only NFT owners can perform this operation");
          require(_listedNFT.forSale == false, "Item already listed for sale");
 
-         ListedNFT storage _myNFT = myNFTs[msg.sender][tokenId];
+         MyNFT storage _myNFT = myNFTs[msg.sender][tokenId];
 
          // Transfer the listing fee to the marketplace creator.
          payable(owner).transfer(listPrice);
@@ -234,7 +248,7 @@ contract NFTMarketplace is ERC721, ERC721Enumerable, ERC721URIStorage {
          require(_listedNFT.seller == msg.sender, "Only NFT owners can perform this operation");
          require(_listedNFT.forSale == true, "Item not listed for sale");
 
-         ListedNFT storage _myNFT = myNFTs[msg.sender][tokenId];
+         MyNFT storage _myNFT = myNFTs[msg.sender][tokenId];
 
          _transfer(address(this), msg.sender, tokenId);
          _listedNFT.forSale = false;
