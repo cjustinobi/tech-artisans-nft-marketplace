@@ -1,7 +1,6 @@
 import { getNFTMeta } from './ipfs'
-import {formatPrice, priceToWei} from "./helpers";
 
-export const nftContractAddress = '0xbB76D7373dE46490F8F28FB964381f8cbbfC1397'
+export const nftContractAddress = '0x1f08cb18155Dc80ceCD8C93AC3b345361ce3661A'
 
 export const createNFT = async (NFTContract, NFTURI, price, address) => {
   try {
@@ -112,39 +111,6 @@ export const getMyNFTs = async (NFTContract, address) => {
   }
 }
 
-
-// export const getMyNFTs = async (NFTContract, address) => {
-//   try {
-//
-//     const NFTCount = await NFTContract.methods.getMyNFTCount(address).call()
-//
-//     let NFTs = []
-//
-//     for (let i = 1; i <= NFTCount; i++) {
-//       const NFT = new Promise(async resolve => {
-//         const NFTItem = await NFTContract.methods.getMyNFTs(i, address).call()
-//
-//         const NFTURI = await NFTContract.methods.tokenURI(NFTItem._NFTId).call()
-//
-//         const NFTMeta = await getNFTMeta(NFTURI)
-//
-//         resolve({
-//           tokenId: NFTItem._NFTId,
-//           price: NFTItem._price,
-//           seller: NFTItem._seller,
-//           forSale: NFTItem._forSale,
-//           name: NFTMeta.name,
-//           image: NFTMeta.image,
-//           initialPrice: NFTMeta.price,
-//           description: NFTMeta.description,
-//         })
-//       })
-//       NFTs.push(NFT)
-//     }
-//
-//     return Promise.all(NFTs)
-//
-//   } catch (e) {
-//     console.log(e)
-//   }
-// }
+export const getSellerStat = async (NFTContract, address) => {
+  return await NFTContract.methods.getSellerStat(address).call()
+}

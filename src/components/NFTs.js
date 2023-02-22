@@ -15,7 +15,6 @@ const NFTs = () => {
   const NFTContract = useContract(NFTMarketplace.abi, nftContractAddress)
 
   const updateUI = () => {
-    alert('inside update ui')
     getNFTsHandler()
   }
   const getNFTsHandler = async () => {

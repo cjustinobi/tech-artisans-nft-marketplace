@@ -1,5 +1,4 @@
 import { useState, useContext, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useContract } from '../hooks'
 import {
   createNFT,
@@ -16,7 +15,6 @@ import {useCelo} from "@celo/react-celo"
 
 const NFTForm = () => {
 
-  const navigate = useNavigate()
   const { kit, address } = useCelo()
   const NFTContract = useContract(NFTMarketplace.abi, nftContractAddress)
 
@@ -59,7 +57,7 @@ const NFTForm = () => {
     setLoading(false)
     setNotification({message: 'NFT successfully created', success: true})
     resetForm()
-    navigate('/')
+    window.location.reload()
   }
 
 
