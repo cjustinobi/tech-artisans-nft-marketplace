@@ -1,7 +1,7 @@
-import {useState, useEffect, useContext} from 'react'
+import {useState, useEffect, useContext, useCallback} from 'react'
 import { useCelo } from '@celo/react-celo'
 import { LoaderContext } from '../contexts/AppContext'
-import {formatPrice, getMyNFTs, getSellerStat, nftContractAddress} from '../utils'
+import { formatPrice, getMyNFTs, getSellerStat, nftContractAddress } from '../utils'
 import { useContract } from '../hooks'
 import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
 import NFTCard from '../components/NFTCard'
@@ -21,19 +21,19 @@ const MyNFTs = () => {
   const updateUI = () => {
     getMyNFTsHandler()
   }
-  const getMyNFTsHandler = async () => {
+  const getMyNFTsHandler = useCallback(async () => {
     setLoading(true)
     const NFTs = await getMyNFTs(NFTContract, address)
     setLoading(false)
     setNFTs(NFTs)
-  }
+  }, [setNFTs, NFTContract])
 
-  const getStat = async () => {
+  const getStat = useCallback(async () => {
     setLoading(true)
     const stats = await getSellerStat(NFTContract, address)
     setLoading(false)
     setStats(stats)
-  }
+  }, [setStats, NFTContract])
 
   useEffect(() => {
 

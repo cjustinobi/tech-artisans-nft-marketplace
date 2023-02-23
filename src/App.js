@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { NotificationContext, LoaderContext } from './contexts/AppContext'
 import AppHeader from './components/layout/Header'
 import Connect from './components/layout/Connect'
@@ -35,8 +35,6 @@ const WrappedApp = () => {
 }
 
 const App = () => {
-
-  const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false)
   const [notification, setNotification] = useState('')

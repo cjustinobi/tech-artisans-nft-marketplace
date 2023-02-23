@@ -1,6 +1,5 @@
 import {useState, useEffect, useCallback} from 'react'
 import { getNfts, nftContractAddress } from '../utils'
-import { LoaderContext } from '../contexts/AppContext'
 import { useContract } from '../hooks'
 import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
 import NFTCard from './NFTCard'
@@ -24,7 +23,8 @@ const NFTs = () => {
       setNFTs(NFTs)
     }
 
-  })
+  }, [setNFTs, getNfts, NFTContract])
+
   useEffect(() => {
 
     getNFTsHandler()
