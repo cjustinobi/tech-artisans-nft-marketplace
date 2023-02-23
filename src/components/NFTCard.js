@@ -29,7 +29,7 @@ const NFTCard = ({ nft, updateUI }) => {
 
   const buyNFTHandler = async nft => {
     setLoading(true)
-    await buyNFT(NFTContract, nft, address, kit)
+    await buyNFT(NFTContract, nft, address)
     setLoading(false)
     updateUI()
   }

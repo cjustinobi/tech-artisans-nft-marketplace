@@ -1,7 +1,7 @@
 import {useState, useEffect, useContext} from 'react'
 import { useCelo } from '@celo/react-celo'
 import { LoaderContext } from '../contexts/AppContext'
-import { getMyNFTs, getSellerStat, nftContractAddress } from '../utils'
+import {formatPrice, getMyNFTs, getSellerStat, nftContractAddress} from '../utils'
 import { useContract } from '../hooks'
 import NFTMarketplace from '../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json'
 import NFTCard from '../components/NFTCard'
@@ -9,7 +9,7 @@ import NFTCard from '../components/NFTCard'
 
 const MyNFTs = () => {
 
-  const { address } = useCelo()
+  const { address, kit } = useCelo()
 
   const { setLoading } = useContext(LoaderContext)
 
@@ -58,7 +58,7 @@ const MyNFTs = () => {
             data-te-ripple-init
             className="[word-wrap: break-word] my-[5px] mr-4 flex h-[32px] items-center justify-between rounded-[16px] bg-[#eceff1] py-0 px-[12px] text-[13px] font-normal normal-case leading-loose text-[#4f4f4f] shadow-none dark:bg-neutral-600 dark:text-neutral-200"
             data-te-close="true">
-            Earnings: {stats._earnings}
+            Earnings: {formatPrice(kit, stats._earnings)}
           </div>
         </div>
         <div class="flex flex-wrap -m-1 md:-m-2">

@@ -22,8 +22,6 @@ export const getNfts = async (NFTContract) => {
         const NFTItem = await NFTContract.methods.getNFT(i).call()
         const NFTURI = await NFTContract.methods.tokenURI(i).call()
 
-        console.log('owner ', await NFTContract.methods.ownerOf(i).call())
-        // console.log('balanceOf ', await NFTContract.methods.balanceOf(NFTItem._seller).call())
         const NFTMeta = await getNFTMeta(NFTURI)
 
         resolve({
@@ -47,8 +45,8 @@ export const getNfts = async (NFTContract) => {
   }
 }
 
-export const buyNFT = async (NFTContract, NFT, address, kit) => {
-  await NFTContract.methods.buyNFT(NFT.tokenId).send({
+export const buyNFT = async (NFTContract, NFT, address) => {
+  return await NFTContract.methods.buyNFT(NFT.tokenId).send({
     from: address,
     value: NFT.price
   })
@@ -59,13 +57,11 @@ export const sellNFT = async (NFTContract, tokenId, address) => {
 
   const listPrice = await NFTContract.methods.getListPrice().call()
 
-  const trans = await NFTContract.methods.sellNFT(tokenId).send({
+  return await NFTContract.methods.sellNFT(tokenId).send({
     from: address,
     value: listPrice
   })
 
-  console.log(trans)
-return trans
 }
 
 export const cancelNFT = async (NFTContract, tokenId, address) => {
@@ -85,9 +81,11 @@ export const getMyNFTs = async (NFTContract, address) => {
 
     for (let i = 1; i < NFTCount; i++) {
       const NFTItem = await NFTContract.methods.getMyNFTs(i, address).call()
+
       if (NFTItem._sold) {
-        continue; // Skip the iteration if the NFT has been sold
+        continue
       }
+
       const NFTURI = await NFTContract.methods.tokenURI(NFTItem._NFTId).call()
 
       const NFTMeta = await getNFTMeta(NFTURI)

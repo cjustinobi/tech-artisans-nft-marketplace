@@ -6,8 +6,3 @@ export const priceToWei = (kit, price) => kit.connection.web3.utils.toWei(String
 export const formatPrice = (kit, price) => price ? kit.connection.web3.utils.fromWei(String(price)) : ''
 
 export const toCheckSum  = (kit, address) => kit.connection.web3.utils.toChecksumAddress(address)
-
-export const cleanDate = dirtyDate => {
-  const date = new Date(dirtyDate)
-  return date.toUTCString()
-}

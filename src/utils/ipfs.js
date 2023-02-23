@@ -1,5 +1,5 @@
 import axios  from 'axios'
-import { IPFS_URL } from './constants'
+import { IPFS_URL, FILE_TO_IPFS_URL, JSON_TO_IPFS_URL } from './constants'
 
 export const imageToIPFS = async (image) => {
 
@@ -10,7 +10,7 @@ export const imageToIPFS = async (image) => {
 
   let config = {
     method: 'post',
-    url: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
+    url: FILE_TO_IPFS_URL,
     headers: {
       'Content-Type': `multipart/form-data boundary=${data._boundary}`,
       'Authorization': `Bearer ${process.env.REACT_APP_PINATA_JWT}`
@@ -24,10 +24,8 @@ export const imageToIPFS = async (image) => {
 }
 
 export const JSONToIPFS = async(json) => {
-  const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`
 
-  // Making axios POST request to Pinata.
-  const res = await axios.post(url, json, {
+  const res = await axios.post(JSON_TO_IPFS_URL, json, {
       headers: {
         'Authorization': `Bearer ${process.env.REACT_APP_PINATA_JWT}`
       }
