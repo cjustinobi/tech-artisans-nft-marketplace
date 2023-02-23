@@ -4,13 +4,12 @@ import { NotificationContext, LoaderContext } from './contexts/AppContext'
 import AppHeader from './components/layout/Header'
 import Connect from './components/layout/Connect'
 import Notification from './components/layout/Notification'
+import Loader from './components/layout/Loader'
 import NFTForm from './components/NFTForm'
 import Home from './pages/Home'
 import MyNFTs from './pages/MyNFTs'
 import { CeloProvider, Alfajores, NetworkNames } from '@celo/react-celo'
 import '@celo/react-celo/lib/styles.css'
-import Loader from "./components/layout/Loader";
-// import './app.css'
 
 
 const WrappedApp = () => {
@@ -27,7 +26,7 @@ const WrappedApp = () => {
       dapp={{
         name: 'NFT Marketplace for Tech Artisans',
         description: '',
-        url: 'https://bwceventhub.netlify.app',
+        url: 'https://tech-artisans.netlify.app',
       }}
     >
       <App />
@@ -41,12 +40,6 @@ const App = () => {
 
   const [loading, setLoading] = useState(false)
   const [notification, setNotification] = useState('')
-
-  const showEventForm = () => {
-    navigate('/events', {
-      state: { showForm: true }
-    })
-  }
 
   return (
     <LoaderContext.Provider value={{loading, setLoading}}>

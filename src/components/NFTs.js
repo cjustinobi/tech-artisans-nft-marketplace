@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react'
+import {useState, useEffect, useContext, useCallback} from 'react'
 import { getNfts, nftContractAddress } from '../utils'
 import { LoaderContext } from '../contexts/AppContext'
 import { useContract } from '../hooks'
@@ -18,19 +18,18 @@ const NFTs = () => {
     getNFTsHandler()
   }
   const getNFTsHandler = async () => {
-    setLoading(true)
+
     let NFTs = await getNfts(NFTContract)
     if (NFTs.length) {
       NFTs = NFTs.filter(NFT => NFT.forSale)
       setNFTs(NFTs)
     }
-    setLoading(false)
 
   }
   useEffect(() => {
 
     getNFTsHandler()
-  }, [NFTContract])
+  }, [NFTContract, getNFTsHandler])
 
 
   return (

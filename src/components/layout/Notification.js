@@ -1,7 +1,6 @@
 import { useEffect, useContext } from 'react'
 import { NotificationContext } from '../../contexts/AppContext'
 
-
 const Notification = () => {
 
   const { notification } = useContext(NotificationContext)
