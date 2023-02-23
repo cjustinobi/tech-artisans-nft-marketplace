@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext, useCallback} from 'react'
+import {useState, useEffect, useCallback} from 'react'
 import { getNfts, nftContractAddress } from '../utils'
 import { LoaderContext } from '../contexts/AppContext'
 import { useContract } from '../hooks'
@@ -8,8 +8,6 @@ import NFTCard from './NFTCard'
 
 const NFTs = () => {
 
-  const { setLoading } = useContext(LoaderContext)
-
   const [NFTs, setNFTs] = useState(undefined)
 
   const NFTContract = useContract(NFTMarketplace.abi, nftContractAddress)
@@ -17,7 +15,8 @@ const NFTs = () => {
   const updateUI = () => {
     getNFTsHandler()
   }
-  const getNFTsHandler = async () => {
+
+  const getNFTsHandler = useCallback(async () => {
 
     let NFTs = await getNfts(NFTContract)
     if (NFTs.length) {
@@ -25,7 +24,7 @@ const NFTs = () => {
       setNFTs(NFTs)
     }
 
-  }
+  })
   useEffect(() => {
 
     getNFTsHandler()

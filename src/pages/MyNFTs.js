@@ -39,7 +39,7 @@ const MyNFTs = () => {
 
     getMyNFTsHandler()
     getStat()
-  }, [NFTContract])
+  }, [NFTContract, getMyNFTsHandler, getStat])
 
 
   return (
