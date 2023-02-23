@@ -26,14 +26,14 @@ const MyNFTs = () => {
     const NFTs = await getMyNFTs(NFTContract, address)
     setLoading(false)
     setNFTs(NFTs)
-  }, [setNFTs, NFTContract])
+  }, [setNFTs, NFTContract, address, setLoading])
 
   const getStat = useCallback(async () => {
     setLoading(true)
     const stats = await getSellerStat(NFTContract, address)
     setLoading(false)
     setStats(stats)
-  }, [setStats, NFTContract])
+  }, [setStats, NFTContract, address, setLoading])
 
   useEffect(() => {
 

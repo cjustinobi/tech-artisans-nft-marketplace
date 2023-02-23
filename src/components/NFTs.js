@@ -23,7 +23,7 @@ const NFTs = () => {
       setNFTs(NFTs)
     }
 
-  }, [setNFTs, getNfts, NFTContract])
+  }, [setNFTs, NFTContract])
 
   useEffect(() => {
 
