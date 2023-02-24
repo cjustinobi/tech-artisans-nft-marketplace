@@ -26,7 +26,7 @@ const WrappedApp = () => {
       dapp={{
         name: 'NFT Marketplace for Tech Artisans',
         description: '',
-        url: 'https://tech-artisans.netlify.app',
+        url: 'https://tech-artisans.vercel.app/',
       }}
     >
       <App />
